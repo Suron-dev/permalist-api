@@ -1,13 +1,10 @@
 import Item from "../models/Item.js";
 import generalSeeder from "../utils/GeneralSeeder.js";
 
-
-
 class ItemController {
-
     static async getItemById(req, res) {
         const { id } = req.params;
-        if (!id) return res.status(400).json({ error: 'ID is required' });
+        if (!id) return res.status(400).json({ error: "ID is required" });
 
         try {
             const result = await Item.getItemById(id);
@@ -15,10 +12,10 @@ class ItemController {
 
             res.status(200).json({
                 message: result.message,
-                item: result.item
+                item: result.item,
             });
         } catch (err) {
-            res.status(500).json({ error: 'Server error' });
+            res.status(500).json({ error: "Server error" });
         }
     }
 
@@ -29,18 +26,18 @@ class ItemController {
 
             res.status(200).json({
                 message: result.message,
-                items: result.items
+                items: result.items,
             });
         } catch (err) {
-            res.status(500).json({ error: 'Server error' });
+            res.status(500).json({ error: "Server error" });
         }
     }
 
     static async getUserItems(req, res) {
         const userId = req.user.id;
         try {
-            const items = await Item.getAllItemsByUser(userId);
-            res.status(200).json(items);
+            const result = await Item.getAllItemsByUser(userId);
+            res.status(200).json(result);
         } catch (err) {
             res.status(500).json({ error: err.message });
         }
@@ -48,56 +45,56 @@ class ItemController {
 
     static async createItem(req, res) {
         const { title } = req.body;
-        if (!title) return res.status(400).json({ error: 'Title is required' });
+        if (!title) return res.status(400).json({ error: "Title is required" });
         const userId = req.user.id;
         try {
-            const result = await Item.create(title , userId);
+            const result = await Item.create(title, userId);
             if (result.error) return res.status(400).json({ error: result.error });
 
             res.status(201).json({
                 message: result.message,
-                newItem: result.newItem
+                newItem: result.newItem,
             });
         } catch (err) {
-            res.status(500).json({ error: 'Server error' });
+            res.status(500).json({ error: "Server error" });
         }
     }
 
     static async updateItem(req, res) {
         const id = req.params.id;
-        const {title} = req.body;
+        const { title } = req.body;
         const userId = req.user.id;
-        if (!id) return res.status(400).json({ error: 'ID is required' });
+        if (!id) return res.status(400).json({ error: "ID is required" });
         try {
-            const result = await Item.update(id , title , userId);
+            const result = await Item.update(id, title, userId);
             if (result.error) return res.status(400).json({ error: result.error });
             res.status(200).json({
                 message: result.message,
-                newItem: result.newItem
-            })
-        }catch(err) {
-            res.status(500).json({ error: 'Server error' });
+                updatedItem: result.updatedItem,
+            });
+        } catch (err) {
+            res.status(500).json({ error: "Server error" });
         }
     }
 
     static async deleteItem(req, res) {
         const { id } = req.params;
-        if (!id) return res.status(400).json({ error: 'ID is required' });
+        if (!id) return res.status(400).json({ error: "ID is required" });
         const userId = req.user.id;
         try {
-            const result = await Item.delete(id , userId);
+            const result = await Item.delete(id, userId);
             if (result.error) return res.status(404).json({ error: result.error });
 
             res.status(200).json({
-                message: result.message
+                message: result.message,
             });
         } catch (err) {
-            res.status(500).json({ error: 'Server error' });
+            res.status(500).json({ error: "Server error" });
         }
     }
 
     static async generateFakeItem(req, res) {
-        try{
+        try {
             const tableName = req.params.table;
             const numberOfItems = parseInt(req.params.number);
             if (isNaN(numberOfItems) || numberOfItems <= 0) {
@@ -105,14 +102,14 @@ class ItemController {
             }
             const result = await generalSeeder.seed(tableName, numberOfItems);
             res.status(200).json({ message: `${numberOfItems} ${tableName} generated successfully.` });
-        }catch (error) {
+        } catch (error) {
             res.status(500).json({ error: `Failed to generate fake items: ${error.message}` });
         }
     }
 
     static async truncate(req, res) {
         const tableName = req.params.table;
-        if (!tableName) return res.status(400).json({ error: 'Table name is required' });
+        if (!tableName) return res.status(400).json({ error: "Table name is required" });
 
         try {
             const result = await generalSeeder.clear(tableName);
@@ -120,11 +117,9 @@ class ItemController {
 
             return res.status(200).json({ message: result.message });
         } catch (err) {
-            return res.status(500).json({ error: 'Server error' });
+            return res.status(500).json({ error: "Server error" });
         }
     }
-
-
 }
 
 export default ItemController;
